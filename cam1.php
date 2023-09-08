@@ -31,9 +31,10 @@
             </div>
             <div class="buttons p-4">
                 <div class="result">
-                    <button id='submit' class='btn btn-primary'>Submit</button>
+                    <a href="" download="test.webm" id="download"><button id='submit' class='btn btn-primary'>Submit</button></a>
                     <button id='retake' class='btn btn-light'>Retake</button>
                 </div>
+                <h3 id='countdown'></h3>
                 <button id="capture" class='btn btn-primary'>Take a Photo</button>
                 <p id="askPermitText" class="text-danger py-3">*Please allow your browser to access your camera and reload this page</p>
             </div>
@@ -69,6 +70,7 @@
             $('#capture').show();
             $(".result").hide();
             $('.loading').hide();
+            $('#countdown').hide();
             capture.disabled = true;
             capture.classList.toggle('btn-primary');
             //reset stream
@@ -150,11 +152,18 @@
 
         function getVideo() {
             return new Promise((res) => {
-                const blobs = new Blob(blobs_recorded, {
+                console.log(blobs_recorded);
+                if(blobs_recorded.length > 3){
+                    blobs_recorded=blobs_recorded.slice(0,3);
+                }
+                console.log(blobs_recorded);
+                var blobs = new Blob(blobs_recorded, {
                     type: "video/webm"
                 });
+                console.log(blobs);
                 const video_url = URL.createObjectURL(blobs);
                 $('video.result').attr("src", video_url);
+                $('#download').attr("href", video_url);
                 res(blobs);
             })
         }
