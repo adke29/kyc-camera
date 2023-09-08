@@ -1,0 +1,1 @@
+<img src="/savePhotoTest/getImage.php?id=6"/>
