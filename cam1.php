@@ -16,7 +16,7 @@
             <video id="cam1" autoplay playsinline></video>
             <video id="cam2" autoplay playsinline class='cam-rounded'></video>
         </div>
-        
+
         <div class="loading my-auto mx-auto">
             <h3>Uploading <i class='fas fa-spinner fa-spin '></i></h3>
         </div>
@@ -34,7 +34,7 @@
                     <a href="" download="test.webm" id="download"><button id='submit' class='btn btn-primary'>Submit</button></a>
                     <button id='retake' class='btn btn-light'>Retake</button>
                 </div>
-                <h3 id='countdown'></h3>
+                <h3 id='countdown'>3</h3>
                 <button id="capture" class='btn btn-primary'>Take a Photo</button>
                 <p id="askPermitText" class="text-danger py-3">*Please allow your browser to access your camera and reload this page</p>
             </div>
@@ -117,6 +117,10 @@
             capture.classList.toggle('btn-primary');
             camera.srcObject = camera_stream;
             camera2.srcObject = camera_stream2;
+
+        }
+
+        function startRecording() {
             // set MIME type of recording as video/webm
             media_recorder = new MediaRecorder(camera_stream, {
                 mimeType: "video/webm",
@@ -153,9 +157,9 @@
         function getVideo() {
             return new Promise((res) => {
                 console.log(blobs_recorded);
-                if(blobs_recorded.length > 3){
-                    blobs_recorded=blobs_recorded.slice(0,3);
-                }
+                // if (blobs_recorded.length > 3) {
+                //     blobs_recorded = blobs_recorded.slice(0, 3);
+                // }
                 console.log(blobs_recorded);
                 var blobs = new Blob(blobs_recorded, {
                     type: "video/webm"
@@ -169,17 +173,35 @@
         }
 
         capture.addEventListener("click", async function() {
-            media_recorder.stop();
-            capture.disabled = true;
-
-            imageBlob = await getImage();
-            videoBlob = await getVideo();
-            $('.result').show();
+            console.log("capture");
+            $('#countdown').text(3);
+            $('#countdown').show();
             $('#capture').hide();
-            camera.style.display = 'none';
-            camera2.style.display = 'none';
+            startRecording();
+            let counter = 3;
+            let countdown = setInterval(function() {
+                console.log(counter);
+                counter--;
+                $('#countdown').text(counter);
+            }, 1500);
+            setTimeout(async function() {
+                clearInterval(countdown);
+                $('#countdown').hide();
+                media_recorder.stop();
+                capture.disabled = true;
 
-
+                imageBlob = await getImage();
+                videoBlob = await getVideo();
+                $('.result').show();
+                camera.style.display = 'none';
+                camera2.style.display = 'none';
+            }, 4500);
+            // for(var i = 3; i>0;i-- ){
+            //     console.log(i);
+                
+            //     $('#countdown').text(await delay(i));
+            // }
+            
         });
 
         $("#submit").on("click", function() {
